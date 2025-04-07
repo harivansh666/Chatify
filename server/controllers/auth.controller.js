@@ -1,11 +1,25 @@
 import { Socket } from "socket.io";
 import userModel from "../models/user.model.js";
-import bcrypt from "bcrypt";
+import bcrypt from  "bcrypt";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 
-const login = (req, res) => {
-  const { email, password } = req.body;
+// const loginSchema = z.object({
+//   email: z.string().email(),
+//   password: z.string().min(6).max(20),
+// }) 
+const login = async (req, res) => {
+const {email, password}=req.body
+const user = await userModel.findOne({ email });
+const isValidPassword = await bcrypt.compare(password, user.password);
+
+if (!isValidPassword) {
+  return res.status(401).json({ message: "Invalid email or password" });
+}
+
+const token = jwt.sign({ email: email, password: password }, process.env.JWT_SECRET, { expiresIn: "1d" });
+res.cookie("auth",token);
+res.send("thanks")
 };
 
 const userschemavalidation = z.object({

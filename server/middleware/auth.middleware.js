@@ -1,26 +1,17 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+// import bcrypt from "bcrypt";
+// import jwt from "jsonwebtoken";
+// import dotenv from "dotenv";
 
-const protect = async (req, res, next) => {
-  try {
-    const saltRounds = 10;
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please provide email and password." });
-    }
+// import cookieParser from 'cookie-parser';
 
-    const salt = await bcrypt.genSalt(saltRounds);
-    console.log(salt);
+// dotenv.config();
 
-    const hashedPassword = await bcrypt.hash(password, salt);
-    // console.log(hashedPassword);
-    // console.log(email, password);
-    next();
-  } catch (error) {
-    console.log(error);
-  }
-};
 
-export default protect;
+// const protect = async (req, res, next) => {
+//   const verifyuser = jwt.verify(req.cookies.token, process.env.JWT_SECRET)
+//   // const verifycookie 
+//   console.log("verify user:-",verifyuser);
+//   next();
+// };
+
+// export default protect;

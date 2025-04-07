@@ -12,7 +12,7 @@ import { mongoconnect } from "./config/db.connect.js";
 mongoconnect();
 
 // import middleware
-import auth from "./middleware/auth.middleware.js";
+
 
 //Routes
 import authRoutes from "./routes/auth.route.js";
@@ -33,7 +33,6 @@ const io = new Server(server, {
 //use middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(auth);
 
 // routes
 app.use("/", authRoutes);
