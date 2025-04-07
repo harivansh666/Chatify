@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import userModel from "../models/user.model.js";
+import {generateToken} from "../config/toke.js";
 import bcrypt from  "bcrypt";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
@@ -10,16 +11,22 @@ import { z } from "zod";
 // }) 
 const login = async (req, res) => {
 const {email, password}=req.body
-const user = await userModel.findOne({ email });
+try {
+
+  const user = await userModel.findOne({ email });
 const isValidPassword = await bcrypt.compare(password, user.password);
 
 if (!isValidPassword) {
   return res.status(401).json({ message: "Invalid email or password" });
 }
 
-const token = jwt.sign({ email: email, password: password }, process.env.JWT_SECRET, { expiresIn: "1d" });
-res.cookie("auth",token);
+generateToken(user._id, res )
 res.send("thanks")
+
+} catch (error) {
+ console.log(error); 
+}
+
 };
 
 const userschemavalidation = z.object({
@@ -30,6 +37,7 @@ const userschemavalidation = z.object({
   gender: z.enum(["Male", "Female"]),
 });
 
+
 const signup = async (req, res) => {
   const parsedData = userschemavalidation.safeParse(req.body);
 
@@ -38,7 +46,7 @@ const signup = async (req, res) => {
       .status(400)
       .json({ message: "Validation error", errors: parsedData.error.errors });
   }
-
+  
   const { fullname, email, password, age, gender } = parsedData.data;
 
   try {
@@ -59,22 +67,33 @@ const signup = async (req, res) => {
       age,
       gender,
     });
-    await createdUser.save();
-
+    
     if (createdUser) {
-      const token = jwt.sign(
-        { email: email, password: hashedPassword },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "1h",
-        }
-      );
-      res.cookie("auth", token);
+      generateToken(createdUser._id, res )
+      await createdUser.save();
+      res.status(201).json({ 
+        _id: createdUser._id,
+        fullname: createdUser.fullname,
+        email: createdUser.email,
+        age: createdUser.age,
+        gender: createdUser.gender,
+        profilepic: createdUser.profilepic,
+        message: "User created successfully"});
     }
-    res.json({ message: "User created successfully" });
   } catch (error) {
-    console.log(error);
+    console.log(error.message );
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-export { login, signup };
+const logout = (req,res) =>{
+  try{
+    res.clearCookie('auth').json("cookie removie successfull");
+
+
+  }catch(error){
+    console.log(error.message)
+  }
+}
+
+export { login, signup, logout };
