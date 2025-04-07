@@ -21,7 +21,14 @@ if (!isValidPassword) {
 }
 
 generateToken(user._id, res )
-res.send("thanks")
+res.json(
+  { _id: user._id,
+  fullname: user.fullname,
+  email: user.email,
+  age: user.age,
+  gender: user.gender,
+  profilepic: user.profilepic,
+  message: "User created successfully"})
 
 } catch (error) {
  console.log(error); 
@@ -88,9 +95,7 @@ const signup = async (req, res) => {
 
 const logout = (req,res) =>{
   try{
-    res.clearCookie('auth').json("cookie removie successfull");
-
-
+    res.clearCookie('auth', "", {maxAge:0}).status(200).json("cookie removie successfull");
   }catch(error){
     console.log(error.message)
   }
