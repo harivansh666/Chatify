@@ -9,7 +9,7 @@
 - 🚢 Production-ready Deployment**: Deploy for FREE like a pro Vercel 
 - 🔄 Continuous Improvements**: More features and polish coming soon! 
 - ⏳ And much more!
-- 
+
 # Setup .env file
 ```
 PORT=...
