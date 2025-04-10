@@ -6,10 +6,10 @@
 - 🚀 Online user status
 - 👌 Global state management with Zustand
 - 🐞 Error handling both on the server and on the client
-- ⭐ At the end Deployment like a pro for FREE!
+- 🚢 Production-ready Deployment**: Deploy for FREE like a pro Vercel 
+- 🔄 Continuous Improvements**: More features and polish coming soon! 
 - ⏳ And much more!
-
-
+- 
 # Setup .env file
 ```
 PORT=...
