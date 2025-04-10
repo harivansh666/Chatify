@@ -4,6 +4,8 @@ import {generateToken} from "../config/toke.js";
 import bcrypt from  "bcrypt";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
+import { json } from "express";
+
 
 // const loginSchema = z.object({
 //   email: z.string().email(),
@@ -101,4 +103,16 @@ const logout = (req,res) =>{
   }
 }
 
-export { login, signup, logout };
+const profileUpdate = async (req, res)=>{
+  
+try {
+const abc =req.user
+  
+res.json(`this i  update profile:- ${abc}`);
+  
+} catch (error) {
+  console.log(error.message)
+}
+
+}
+export { login, signup, logout, profileUpdate };

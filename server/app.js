@@ -3,6 +3,8 @@ import { Server } from "socket.io";
 import http from "http";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from 'cookie-parser';
+
 
 //Configurations
 dotenv.config();
@@ -33,6 +35,7 @@ const io = new Server(server, {
 //use middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // routes
 app.use("/", authRoutes);
