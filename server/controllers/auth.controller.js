@@ -4,7 +4,7 @@ import {generateToken} from "../config/toke.js";
 import bcrypt from  "bcrypt";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
-import { json } from "express";
+import cloudinary from "../config/cloudinary.config.js";
 
 
 // const loginSchema = z.object({
@@ -106,13 +106,30 @@ const logout = (req,res) =>{
 const profileUpdate = async (req, res)=>{
   
 try {
-const abc =req.user
-  
-res.json(`this i  update profile:- ${abc}`);
+const {profilepic} =req.body;
+
+const userid = req.user._id;
+if(!profilepic){
+  return res.status(400).json({message: "profilepic is required"})
+}
+
+const uploadResponse = await cloudinary.uploader.upload(profilepic);
+const updateUser = await userModel.findByIdAndUpdate(userid, {profilepic: uploadResponse.secure_url}, {new: true})
+
+res.status(200).json(updateUser);
   
 } catch (error) {
   console.log(error.message)
 }
 
 }
-export { login, signup, logout, profileUpdate };
+
+const checkAuth = async (req,res)=>{
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("error is checkauth controller",error.message)
+    res.status(400).json(error.message);
+  }
+}
+export { login, signup, logout, profileUpdate, checkAuth };

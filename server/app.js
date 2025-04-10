@@ -18,6 +18,7 @@ mongoconnect();
 
 //Routes
 import authRoutes from "./routes/auth.route.js";
+import messageRoute from "./routes/message.route.js"
 
 // App Setup
 const app = express();
@@ -38,7 +39,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // routes
-app.use("/", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/message", messageRoute);
 
 // Socket.io Events
 io.on("connection", (socket) => {

@@ -1,17 +1,23 @@
 import mongoose, { Types } from "mongoose";
-import { array } from "zod";
+import { array, string } from "zod";
 
 const userMessage = new mongoose.Schema(
   {
     senderid: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      require: true
     },
-    receiverid: {},
-    message: {
+    receiverid: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      require: true
+    },
+    text: {
       type: String,
     },
     image: {
-      type: Array,
+      type: String,
     },
   },
   {
