@@ -25,7 +25,7 @@ const protect = async (req, res, next) => {
             
             req.user = user;
 
-            next()
+            next()  
             
         // console.log(decoded);
     } catch (error) {
@@ -33,6 +33,5 @@ const protect = async (req, res, next) => {
         res.status(500).json({ message: "Not authorized" });  
               
     }
-    next()
 }
 export default protect;
