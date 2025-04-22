@@ -3,8 +3,7 @@ import { Server } from "socket.io";
 import http from "http";
 import dotenv from "dotenv";
 import cors from "cors";
-import cookieParser from 'cookie-parser';
-
+import cookieParser from "cookie-parser";
 
 //Configurations
 dotenv.config();
@@ -15,10 +14,9 @@ mongoconnect();
 
 // import middleware
 
-
 //Routes
 import authRoutes from "./routes/auth.route.js";
-import messageRoute from "./routes/message.route.js"
+import messageRoute from "./routes/message.route.js";
 
 // App Setup
 const app = express();
@@ -37,6 +35,7 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // routes
 app.use("/api/auth", authRoutes);
