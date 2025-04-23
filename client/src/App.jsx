@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from "react-router";
 
 import "./App.css";
 
+import { Toaster } from "react-hot-toast";
+
 // state
 import { useAuthStore } from "./store/useAuthStore";
 
@@ -12,6 +14,9 @@ import ProfilePage from "./pages/ProfilePage";
 import SettingPage from "./pages/SettingPage";
 import SignUpPage from "./pages/SignUpPage";
 
+//components
+import Navbar from "./components/Navbar";
+
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
 
@@ -19,7 +24,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  console.log(authUser);
+  console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
     return (
@@ -30,6 +35,8 @@ function App() {
 
   return (
     <>
+      <Navbar />
+
       <Routes>
         <Route
           path="/"
@@ -53,6 +60,8 @@ function App() {
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
       </Routes>
+
+      <Toaster />
     </>
   );
 }

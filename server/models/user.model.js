@@ -7,15 +7,11 @@ const userModel = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    fullname: {
+    fullName: {
       type: String,
       required: true,
     },
-    gender: {
-      type: String,
-      enum: ["Male", "Female"],
-      required: true,
-    },
+
     password: {
       type: String,
       required: true,

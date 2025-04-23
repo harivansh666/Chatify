@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
-import SignUpPage from "../pages/SignUpPage.jsx";
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
   authUser: null, //Jab user login nahi hai, to authUser null hota hai. Jab login ho jaata hai, to isme user ka data aa jaata hai.
@@ -10,10 +10,13 @@ export const useAuthStore = create((set) => ({
 
   isCheckingAuth: true, //  App start hote hi check karta hai "kya user already login hai?" Us waqt isCheckingAuth: true. Jab check complete ho jaata hai, isCheckingAuth: false.
 
-  checkAuth: async (req, res) => {
+  checkAuth: async () => {
     try {
-      const response = axiosInstance.get("/auth/check");
-      set({ authUser: response.data, isCheckingAuth: false });
+      const response = await axiosInstance.get("/auth/check", {
+        withCredentials: true,
+      });
+
+      set({ authUser: response.data });
     } catch (error) {
       console.error("Error checking authentication:", error);
       set({ authUser: null });
@@ -23,13 +26,36 @@ export const useAuthStore = create((set) => ({
   },
 
   SignUp: async (data) => {
-    const response = await axiosInstance.post("/auth/signup", {
-      fullName,
-      email,
-      password,
-    });
-    set({ authUser: response.data, isSigningUp: false });
+    try {
+      set({ isSigningUp: true });
+      const { fullName, email, password } = data;
+      console.log("Sending signup data:", data);
 
+      const response = await axiosInstance.post("/auth/signup", {
+        fullName,
+        email,
+        password,
+      });
+
+      set({ authUser: response.data });
+
+      toast.success("Successfully Signup!");
+    } catch {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
+
+  logout: async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ authUser: null });
+      toast.success("Logged out succesfully");
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast.error(error.response.data.message);
+    }
   },
 }));
 

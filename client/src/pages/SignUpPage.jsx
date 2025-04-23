@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Eye, EyeOff, Lock, Mail, MessageSquare, User } from "lucide-react";
+import { Link } from "react-router";
+
+import AuthImagePattern from "../components/AuthImagePattern";
+import toast from "react-hot-toast";
 
 function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,28 +19,26 @@ function SignUpPage() {
     return <span className="loading loading-spinner loading-md"></span>;
 
   const validateForm = () => {
-    if (!fullName) {
-      <div role="alert" className="alert alert-info">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          className="h-6 w-6 shrink-0 stroke-current"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-        <span>Plese Enter Fullname</span>
-      </div>;
-    }
+    if (!formData.fullName.trim())
+      return toast.error("Plese Enter Full Name is Required.");
+    if (!formData.email.trim())
+      return toast.error("Plese Enter Email Required.");
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      return toast.error("Invalid email format");
+
+    if (!formData.password.trim())
+      return toast.error("Plese Enter Password Required.");
+
+    if (formData.password.length < 6)
+      return toast.error("Password must be at least 6 characters");
+
+    return true;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const success = validateForm();
+    if (success === true) SignUp(formData); 
   };
 
   return (
@@ -66,8 +68,11 @@ function SignUpPage() {
                 <span className="label-text font-medium">Full Name</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="size-5 text-base-content/40" />
+                <div className=" absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
+                  <User
+                    strokeWidth={1.25}
+                    className="w-16 text-base-content/40"
+                  />
                 </div>
                 <input
                   type="text"
@@ -146,8 +151,19 @@ function SignUpPage() {
               )}
             </button>
           </form>
+
+          <div className="text-center">
+            <p className="text-base-content/60">
+              Already have an account? <Link to="/login"> Sign in</Link>
+            </p>
+          </div>
         </div>
       </div>
+
+      <AuthImagePattern
+        title="Chatify"
+        subtitle="Connect with friends, share moments, and stay in touch with your loved ones. By Harivansh"
+      />
     </div>
   );
 }
