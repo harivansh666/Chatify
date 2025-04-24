@@ -12,6 +12,8 @@ const loginSchema = z.object({
 });
 const login = async (req, res) => {
   const { email, password } = req.body;
+
+  console.log(email, password);
   try {
     const user = await userModel.findOne({ email });
     const isValidPassword = await bcrypt.compare(password, user.password);

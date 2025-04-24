@@ -57,6 +57,42 @@ export const useAuthStore = create((set) => ({
       toast.error(error.response.data.message);
     }
   },
+
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    console.log(email, password);
+    try {
+      const response = await axiosInstance.post("/auth/", data);
+
+      set({ authUser: response.data });
+
+      toast.success("Login Succesfully");
+      console.log(response.data);
+      return true;
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.error("Error during login:", error);
+      return false;
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      set({ authUser: res.data });
+      toast.success("Logged in successfully");
+
+      get().connectSocket();
+    } catch (error) {
+      console.log("login error br:-", error);
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
 }));
 
 // State | Purpose

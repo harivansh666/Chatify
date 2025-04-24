@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function ProfilePage() {
-  return (
-    <div>ProfilePage</div>
-  )
+  return <div className="w-full h-screen bg-amber-900">ProfilePage</div>;
 }
 
-export default ProfilePage
+export default ProfilePage;
