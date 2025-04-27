@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import cloudinary from "../config/cloudinary.config.js";
+import { profile } from "console";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -106,10 +107,12 @@ const logout = (req, res) => {
 const profileUpdate = async (req, res) => {
   try {
     const { profilepic } = req.body;
-
     const userid = req.user._id;
+
+    console.log(userid);
+    
     if (!profilepic) {
-      return res.status(400).json({ message: "profilepic is required" });
+      return res.status(400).json({ message: "Profile Pic is required" });
     }
 
     const uploadResponse = await cloudinary.uploader.upload(profilepic);

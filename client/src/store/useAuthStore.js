@@ -6,7 +6,7 @@ export const useAuthStore = create((set) => ({
   authUser: null, //Jab user login nahi hai, to authUser null hota hai. Jab login ho jaata hai, to isme user ka data aa jaata hai.
   isSigningUp: false, // Jab signup process chal raha hota hai (jaise form submit hua), to isSigningUp ko true karte hain. Jab khatam ho jaata hai, firse false.
   isLoggingIn: false,
-  isUpdatingProfile: false,
+  isUpdatingProfile: false, //Loading state.
 
   isCheckingAuth: true, //  App start hote hi check karta hai "kya user already login hai?" Us waqt isCheckingAuth: true. Jab check complete ho jaata hai, isCheckingAuth: false.
 
@@ -78,19 +78,21 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  login: async (data) => {
-    set({ isLoggingIn: true });
-    try {
-      const res = await axiosInstance.post("/auth/login", data);
-      set({ authUser: res.data });
-      toast.success("Logged in successfully");
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
 
-      get().connectSocket();
+    try {
+      const response = await axiosInstance.put("/auth/update-profile", data);
+
+      set({ authUser: response.data });
+      console.log(response.data);
+
+      toast.success("Profile updated succesfully");
     } catch (error) {
-      console.log("login error br:-", error);
-      toast.error(error.response.data.message);
+      console.log("error is updating profile:", error);
+      toast.error("error aa ithe", error.response.data.message);
     } finally {
-      set({ isLoggingIn: false });
+      set({ isUpdatingProfile: false });
     }
   },
 }));
