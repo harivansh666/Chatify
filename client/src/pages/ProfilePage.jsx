@@ -14,7 +14,7 @@ function ProfilePage() {
     // if user select any image ? then
     const reader = new FileReader();
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file); //iss ne base65Image vich convert krna hai.
 
     reader.onload = async () => {
       const base65Image = reader.result;

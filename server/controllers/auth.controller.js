@@ -109,8 +109,8 @@ const profileUpdate = async (req, res) => {
     const { profilepic } = req.body;
     const userid = req.user._id;
 
-    console.log(userid);
-    
+    // console.log(userid);
+
     if (!profilepic) {
       return res.status(400).json({ message: "Profile Pic is required" });
     }
