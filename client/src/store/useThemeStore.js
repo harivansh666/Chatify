@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export const useThemeStore = create((set) => ({
-  theme: localStorage.getItem("chatme-theme") || "dark", //localStorage vich ja ke check kruga ke localstorage vich chatme-theme naam to ke pya aa je null hoya ta dark set kruga nahi ta jo value hoi save on wali
+  theme: localStorage.getItem("chatme-theme") || "<dark></dark>", //localStorage vich ja ke check kruga ke localstorage vich chatme-theme naam to ke pya aa je null hoya ta dark set kruga nahi ta jo value hoi save on wali
 
   setTheme: (theme) => {
     localStorage.setItem("chatme-theme", theme);
