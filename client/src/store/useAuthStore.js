@@ -10,6 +10,8 @@ export const useAuthStore = create((set) => ({
 
   isCheckingAuth: true, //  App start hote hi check karta hai "kya user already login hai?" Us waqt isCheckingAuth: true. Jab check complete ho jaata hai, isCheckingAuth: false.
 
+  onlineUsers: [],
+
   checkAuth: async () => {
     try {
       const response = await axiosInstance.get("/auth/check", {
