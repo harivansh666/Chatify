@@ -1,15 +1,16 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
-
-export const useAuthStore = create((set) => ({
+import { io } from "socket.io-client";
+const baseURl = "http://localhost:3000/";
+export const useAuthStore = create((set, get) => ({
   authUser: null, //Jab user login nahi hai, to authUser null hota hai. Jab login ho jaata hai, to isme user ka data aa jaata hai.
   isSigningUp: false, // Jab signup process chal raha hota hai (jaise form submit hua), to isSigningUp ko true karte hain. Jab khatam ho jaata hai, firse false.
   isLoggingIn: false,
   isUpdatingProfile: false, //Loading state.
 
   isCheckingAuth: true, //  App start hote hi check karta hai "kya user already login hai?" Us waqt isCheckingAuth: true. Jab check complete ho jaata hai, isCheckingAuth: false.
-
+  socket: null,
   onlineUsers: [],
 
   checkAuth: async () => {
@@ -19,6 +20,7 @@ export const useAuthStore = create((set) => ({
       });
 
       set({ authUser: response.data });
+      get().connectSocket();
     } catch (error) {
       console.error("Error checking authentication:", error);
       set({ authUser: null });
@@ -42,7 +44,8 @@ export const useAuthStore = create((set) => ({
       set({ authUser: response.data });
 
       toast.success("Successfully Signup!");
-    } catch {
+      get().connectSocket();
+    } catch (error) {
       toast.error(error.response.data.message);
     } finally {
       set({ isSigningUp: false });
@@ -54,6 +57,7 @@ export const useAuthStore = create((set) => ({
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
       toast.success("Logged out succesfully");
+      get().disconnectSocket();
     } catch (error) {
       console.error("Error during logout:", error);
       toast.error(error.response.data.message);
@@ -68,6 +72,7 @@ export const useAuthStore = create((set) => ({
       set({ authUser: response.data });
 
       toast.success("Login Succesfully");
+      get().connectSocket();
       console.log(response.data);
       return true;
     } catch (error) {
@@ -96,9 +101,34 @@ export const useAuthStore = create((set) => ({
       set({ isUpdatingProfile: false });
     }
   },
-}));
 
-// State | Purpose
-// false | Default idle state (kuch nahi ho raha)
-// true | Process in progress (loading dikhao)
-// null | Data abhi nahi mila (ya logout ho gaya)
+  connectSocket: async () => {
+    try {
+      console.log("Env URL:", import.meta.env.SOCKET_IO_URL);
+
+      const { authUser } = get();
+      if (!authUser || get().socket?.connected) return;
+
+      const socket = io(import.meta.env.SOCKET_IO_URL, {
+        withCredentials: true,
+      });
+
+      socket.connect();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  disconnectSocket: async () => {
+    try {
+      const { authUser } = get();
+      if (!authUser || get().socket?.connected) return;
+      const socket = io(import.meta.env.SOCKET_IO_URL, {
+        withCredentials: true,
+      });
+      socket.disconnect();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+}));

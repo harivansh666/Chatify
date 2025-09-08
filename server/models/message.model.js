@@ -6,12 +6,12 @@ const userMessage = new mongoose.Schema(
     senderid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      require: true
+      require: true,
     },
     receiverid: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      require: true
+      require: true,
     },
     text: {
       type: String,

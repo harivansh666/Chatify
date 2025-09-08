@@ -8,7 +8,6 @@ const getUsersForSidebar = async (req, res) => {
     const filtredUser = await userModel
       .find({ _id: { $ne: logedinuserid } })
       .select("-password");
-    console.log(filtredUser);
     // iss da matlab aa ke menu id (_id:) de sare users de but not logedinuserid de.
     res.status(200).json(filtredUser);
   } catch (error) {
@@ -19,13 +18,15 @@ const getUsersForSidebar = async (req, res) => {
 
 const getMessages = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
+    const { id: userToChatId } = req.params; // const userToChatId = req.params.id;
+
     const myId = req.user._id;
+
     const message = await messageModel
       .find({
         $or: [
-          { senderid: myId, receiverid: receiverid },
-          { senderid: receiverid, receiverid: myId },
+          { senderid: myId, receiverid: userToChatId }, //userToChatId = jis user naal chat krni aa.
+          { senderid: userToChatId, receiverid: myId },
         ],
       })
       .sort({ createdAt: 1 });
@@ -41,7 +42,7 @@ const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
     const { id: receiverId } = req.params;
-    const { id: senderId } = req.user._id;
+    const senderId = req.user._id;
 
     let imageUrl;
     if (image) {
@@ -49,12 +50,12 @@ const sendMessage = async (req, res) => {
       imageUrl = uploadResponse.secure_url;
     }
     const newMessage = new messageModel({
-      senderid,
-      receiverid,
+      senderid: senderId,
+      receiverid: receiverId,
       text,
       image: imageUrl,
     });
-    await message.save();
+    await newMessage.save();
     //todo: real time functinality here
     res.status(201).json(newMessage);
   } catch (error) {

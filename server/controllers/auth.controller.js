@@ -14,7 +14,6 @@ const loginSchema = z.object({
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email, password);
   try {
     const user = await userModel.findOne({ email });
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -52,8 +51,6 @@ const signup = async (req, res) => {
   }
 
   const { fullName, email, password } = parsedData.data;
-
-  console.log(fullName, email, password);
 
   try {
     const existedUser = await userModel.findOne({ email: email });
