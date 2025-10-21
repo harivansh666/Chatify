@@ -23,7 +23,7 @@ const login = async (req, res) => {
     }
 
     generateToken(user._id, res);
-    res.json({
+    return res.json({
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
@@ -32,6 +32,9 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    return res
+      .status(500)
+      .json({ message: "somthing went wrong", success: false });
   }
 };
 
@@ -74,7 +77,7 @@ const signup = async (req, res) => {
 
       await createdUser.save();
 
-      res.status(201).json({
+      return res.status(201).json({
         _id: createdUser._id,
         fullName: createdUser.fullName,
         email: createdUser.email,
@@ -86,13 +89,13 @@ const signup = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
 const logout = (req, res) => {
   try {
-    res
+    return res
       .clearCookie("auth", "", { maxAge: 0 })
       .status(200)
       .json("cookie removie successfull");
@@ -119,18 +122,19 @@ const profileUpdate = async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json(updateUser);
+    return res.status(200).json(updateUser);
   } catch (error) {
     console.log(error.message);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
 const checkAuth = async (req, res) => {
   try {
-    res.status(200).json(req.user);
+    return res.status(200).json(req.user);
   } catch (error) {
     console.log("error is checkauth controller", error.message);
-    res.status(400).json(error.message);
+    return res.status(400).json(error.message);
   }
 };
 export { login, signup, logout, profileUpdate, checkAuth };

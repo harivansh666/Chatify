@@ -8,7 +8,6 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUserLoading: false,
   isMessageLoading: false,
-  onlineUsers: [],
 
   getUsers: async () => {
     set({ isUserLoading: true });
@@ -26,7 +25,6 @@ export const useChatStore = create((set, get) => ({
   getMessages: async (userId) => {
     set({ isMessageLoading: true });
     try {
-      console.log(userId);
       const response = await axiosInstance.get(`/message/${userId}`);
       set({ message: response.data });
     } catch (error) {

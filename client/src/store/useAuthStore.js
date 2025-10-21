@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
-const baseURl = "http://localhost:3000/";
+
 export const useAuthStore = create((set, get) => ({
   authUser: null, //Jab user login nahi hai, to authUser null hota hai. Jab login ho jaata hai, to isme user ka data aa jaata hai.
   isSigningUp: false, // Jab signup process chal raha hota hai (jaise form submit hua), to isSigningUp ko true karte hain. Jab khatam ho jaata hai, firse false.
@@ -55,9 +55,9 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
+      get().disconnectSocket();
       set({ authUser: null });
       toast.success("Logged out succesfully");
-      get().disconnectSocket();
     } catch (error) {
       console.error("Error during logout:", error);
       toast.error(error.response.data.message);
@@ -74,6 +74,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Login Succesfully");
       get().connectSocket();
       console.log(response.data);
+
       return true;
     } catch (error) {
       toast.error(error.response.data.message);
@@ -104,16 +105,25 @@ export const useAuthStore = create((set, get) => ({
 
   connectSocket: async () => {
     try {
-      console.log("Env URL:", import.meta.env.SOCKET_IO_URL);
+      console.log("Env URL:", import.meta.env.VITE_SOCKET_IO_URL);
 
       const { authUser } = get();
       if (!authUser || get().socket?.connected) return;
 
-      const socket = io(import.meta.env.SOCKET_IO_URL, {
+      const socket = io(import.meta.env.VITE_SOCKET_IO_URL, {
+        // io() sirf 2 arguments accept karta hai: 1 url, 2 options jo me ek object vich dita hai
+        query: { userId: authUser._id },
+
         withCredentials: true,
       });
 
       socket.connect();
+
+      set({ socket: socket });
+
+      socket.on("getOnlineUsers", (userIds) => {
+        set({ onlineUsers: userIds });
+      });
     } catch (error) {
       console.log(error);
     }
@@ -121,12 +131,11 @@ export const useAuthStore = create((set, get) => ({
 
   disconnectSocket: async () => {
     try {
-      const { authUser } = get();
-      if (!authUser || get().socket?.connected) return;
-      const socket = io(import.meta.env.SOCKET_IO_URL, {
-        withCredentials: true,
-      });
+      const { socket, authUser } = get();
+      if (!authUser || !socket) return;
       socket.disconnect();
+      set({ socket: null });
+      console.log("Socket disconnected");
     } catch (error) {
       console.log(error);
     }
